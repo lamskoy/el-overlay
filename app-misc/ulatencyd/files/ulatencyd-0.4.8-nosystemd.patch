@@ -1,0 +1,12 @@
+diff -ur ulatencyd-0.4.10/CMakeLists.txt ulatencyd-0.4.10-new/CMakeLists.txt
+--- ulatencyd-0.4.10/CMakeLists.txt	2011-03-03 16:53:27.000000000 +0200
++++ ulatencyd-0.4.10-new/CMakeLists.txt	2011-03-13 02:40:46.716666951 +0200
+@@ -53,7 +53,7 @@
+ SET(CONFIG_PREFIX "/etc" CACHE STRING
+       "Config prefix"
+       FORCE)
+-SET(SYSTEMD_DIR "/lib/systemd/system" CACHE STRING
++SET(SYSTEMD_DIR "" CACHE STRING
+       "systemd service file directory")
+ 
+ set(LIBPROC_INCLUDE_DIRS src)

@@ -1,0 +1,18 @@
+#!/sbin/runscript
+# Copyright 1999-2011 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header: $
+
+start() {
+  ebegin "Start ulatencyd"
+  start-stop-daemon --stdout /var/log/ulatencyd.log --start --exec /usr/sbin/ulatencyd \
+    --pidfile /var/run/ulatencyd.pid --background --make-pidfile
+  eend $?
+}
+
+stop() {
+  ebegin "Stopping ulatencyd"
+  start-stop-daemon --stop --exec /usr/sbin/ulatencyd \
+    --pidfile /var/run/ulatencyd.pid
+  eend $?
+}

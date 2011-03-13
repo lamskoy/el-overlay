@@ -1,0 +1,9 @@
+diff -ur ulatencyd-0.4.10/client/ulatency ulatencyd-0.4.10-new/client/ulatency
+--- ulatencyd-0.4.10/client/ulatency	2011-03-03 16:53:27.000000000 +0200
++++ ulatencyd-0.4.10-new/client/ulatency	2011-03-13 02:54:52.853333616 +0200
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ # -*- coding: utf-8 -*-
+ import sys
+ 
