@@ -4,7 +4,7 @@
 
 EAPI=3
 
-DESCRIPTION="Gnuclad"
+DESCRIPTION="A cladogram tree generator mainly used by GNU/Linux distro timeline project"
 HOMEPAGE="https://launchpad.net/gnuclad/"
 SRC_URI="http://launchpad.net/gnuclad/trunk/0.2/+download/${P}.tar.gz"
 

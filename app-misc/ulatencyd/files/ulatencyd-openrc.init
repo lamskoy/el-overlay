@@ -5,7 +5,7 @@
 
 start() {
   ebegin "Start ulatencyd"
-  start-stop-daemon --start --exec /usr/sbin/ulatencyd \
+  start-stop-daemon --stdout /var/log/ulatencyd.log --start --exec /usr/sbin/ulatencyd \
     --pidfile /var/run/ulatencyd.pid --background --make-pidfile
   eend $?
 }
