@@ -16,3 +16,12 @@ IUSE=""
 DEPEND=""
 RDEPEND="${DEPEND}"
 
+src_compile() {
+    local myconf="--prefix=/usr"
+    econf ${myconf} || die "econf failed"
+    emake || die "emake failed"
+}
+
+src_install() {
+    emake DESTDIR="${D}" install || die "emake install failed"
+}
