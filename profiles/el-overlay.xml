@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE repositories SYSTEM "/dtd/repositories.dtd">
+<repositories xmlns="" version="1.0">
+   <repo quality="experimental" status="unoffficial">
+     <name>el-overlay</name>
+     <homepage>http://github.com/lamskoy/el-overlay</homepage>
+     <description>Personal ebuilds</description>
+     <source type="git">git://github.com/lamskoy/el-overlay.git</source>
+     <feed>http://github.com/feeds/lamskoy/commits/el-overlay/master</feed>
+     <owner>
+        <email>e.lamskoy2gmail.com</email>
+        <name>Eugene Lamskoy</name>
+     </owner>
+   </repo>
+</repositories>
