@@ -1,0 +1,6 @@
+Overlay containing:
+
+AUR cleartype patches for: cairo, freetype, libXft, fontconfig
+ulatencyd ebuilds (incl. luaposix)
+
+etc.
