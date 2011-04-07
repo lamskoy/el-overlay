@@ -13,7 +13,7 @@ SRC_URI="https://github.com/downloads/poelzi/${PN}/${P}.tar.gz"
 LICENSE="GPL3"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="systemd openrc"
+IUSE="systemd openrc gui"
 
 DEPEND="dev-libs/glib:2
 dev-libs/dbus-glib
@@ -22,6 +22,7 @@ dev-lua/luaposix
 >=dev-lang/python-2.2
 systemd? ( sys-apps/systemd )
 openrc? ( sys-apps/openrc )
+gui? ( dev-python/PyQt4[X] )
 "
 
 RDEPEND="${DEPEND}"
