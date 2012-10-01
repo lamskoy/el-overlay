@@ -1,0 +1,226 @@
+--- fontconfig-2.10.1.orig/conf.d/40-nonlatin.conf	2012-07-24 04:01:32.000000000 +0200
++++ fontconfig-2.10.1/conf.d/40-nonlatin.conf	2012-08-02 22:28:26.202579135 +0200
+@@ -161,6 +161,10 @@
+ 		<default><family>sans-serif</family></default>
+ 	</alias>
+ 	<alias>
++		<family>MgOpen Moderna</family>
++		<default><family>sans-serif</family></default>
++	</alias>
++	<alias>
+ 		<family>Sazanami Gothic</family>
+ 		<default><family>sans-serif</family></default>
+ 	</alias>
+--- fontconfig-2.10.1.orig/conf.d/60-latin.conf	2012-02-20 04:49:18.000000000 +0100
++++ fontconfig-2.10.1/conf.d/60-latin.conf	2012-08-02 22:28:09.226578434 +0200
+@@ -4,8 +4,8 @@
+ 	<alias>
+ 		<family>serif</family>
+ 		<prefer>
+-			<family>Bitstream Vera Serif</family>
+ 			<family>DejaVu Serif</family>
++			<family>Bitstream Vera Serif</family>
+ 			<family>Times New Roman</family>
+ 			<family>Thorndale AMT</family>
+ 			<family>Luxi Serif</family>
+@@ -16,8 +16,8 @@
+ 	<alias>
+ 		<family>sans-serif</family>
+ 		<prefer>
+-			<family>Bitstream Vera Sans</family>
+ 			<family>DejaVu Sans</family>
++			<family>Bitstream Vera Sans</family>
+ 			<family>Verdana</family>
+ 			<family>Arial</family>
+ 			<family>Albany AMT</family>
+@@ -32,8 +32,8 @@
+ 	<alias>
+ 		<family>monospace</family>
+ 		<prefer>
+-			<family>Bitstream Vera Sans Mono</family>
+ 			<family>DejaVu Sans Mono</family>
++			<family>Bitstream Vera Sans Mono</family>
+ 			<family>Inconsolata</family>
+ 			<family>Andale Mono</family>
+ 			<family>Courier New</family>
+--- fontconfig-2.10.1.orig/conf.d/40-nonlatin.conf	2012-08-02 22:28:09.226578434 +0200
++++ fontconfig-2.10.1/conf.d/40-nonlatin.conf	2012-08-02 22:28:09.246578435 +0200
+@@ -62,6 +62,10 @@
+ 		<default><family>serif</family></default>
+ 	</alias>
+ 	<alias>
++		<family>NanumMyeongjo</family>
++		<default><family>serif</family></default>
++	</alias>
++	<alias>
+ 		<family>UnBatang</family>
+ 		<default><family>serif</family></default>
+ 	</alias>
+@@ -90,6 +94,10 @@
+ 		<default><family>serif</family></default>
+ 	</alias>
+ 	<alias>
++		<family>Baekmuk Gulim</family>
++		<default><family>sans-serif</family></default>
++	</alias>
++	<alias>
+ 		<family>SimSun</family>
+ 		<default><family>serif</family></default>
+ 	</alias>
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ fontconfig-2.10.1/conf.d/53-monospace-lcd-filter.conf	2012-08-02 22:28:09.262578436 +0200
+@@ -0,0 +1,22 @@
++<?xml version="1.0"?>
++<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
++<!-- conf.d/monospace-lcd-filter.conf -->
++<fontconfig>
++<!--  Use legacy LCD filter on smaller Monospace fonts -->
++  <match target="font">
++    <test name="family">
++      <string>DejaVu Sans Mono</string>
++      <string>Bitstream Vera Sans Mono</string>
++    </test>
++    <test name="pixelsize" compare="less_eq">
++      <double>12.0</double>
++    </test>
++
++    <edit name="lcd_filter" mode="assign">
++      <const>lcdlegacy</const>
++    </edit>
++    <edit name="hintstyle" mode="assign">
++      <const>hintfull</const>
++    </edit>
++  </match>
++</fontconfig>
+--- fontconfig-2.10.1.orig/src/fcname.c	2012-07-24 04:01:32.000000000 +0200
++++ fontconfig-2.10.1/src/fcname.c	2012-08-02 22:28:09.282578437 +0200
+@@ -453,6 +453,7 @@
+     { (FcChar8 *) "lcddefault",	    "lcdfilter",    FC_LCD_DEFAULT },
+     { (FcChar8 *) "lcdlight",	    "lcdfilter",    FC_LCD_LIGHT },
+     { (FcChar8 *) "lcdlegacy",	    "lcdfilter",    FC_LCD_LEGACY },
++    { (FcChar8 *) "lcdfilterlegacy",	    "lcdfilter",    FC_LCD_LEGACY },
+ };
+ 
+ #define NUM_FC_CONSTANTS   (sizeof _FcBaseConstants/sizeof _FcBaseConstants[0])
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ fontconfig-2.10.1/conf.d/10-antialias.conf	2012-08-02 22:28:09.298578437 +0200
+@@ -0,0 +1,8 @@
++<?xml version="1.0"?>
++<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
++<fontconfig>
++<!--  Use the Antialiasing --> 
++  <match target="font">
++    <edit name="antialias" mode="assign"><bool>true</bool></edit>
++  </match>
++</fontconfig>
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ fontconfig-2.10.1/conf.d/10-hinting.conf	2012-08-02 22:28:09.298578437 +0200
+@@ -0,0 +1,8 @@
++<?xml version="1.0"?>
++<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
++<fontconfig>
++<!--  Use Hinting --> 
++  <match target="font">
++    <edit name="hinting" mode="assign"><bool>true</bool></edit>
++  </match>
++</fontconfig>
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ fontconfig-2.10.1/conf.d/10-hinting-full.conf	2012-08-02 22:28:09.298578437 +0200
+@@ -0,0 +1,8 @@
++<?xml version="1.0"?>
++<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
++<fontconfig>
++<!--  Use Full Hinting --> 
++  <match target="font">
++    <edit name="hintstyle" mode="assign"><const>hintfull</const></edit>
++  </match>
++</fontconfig>
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ fontconfig-2.10.1/conf.d/10-hinting-medium.conf	2012-08-02 22:28:09.298578437 +0200
+@@ -0,0 +1,8 @@
++<?xml version="1.0"?>
++<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
++<fontconfig>
++<!--  Use Medium Hinting --> 
++  <match target="font">
++    <edit name="hintstyle" mode="assign"><const>hintmedium</const></edit>
++  </match>
++</fontconfig>
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ fontconfig-2.10.1/conf.d/10-hinting-slight.conf	2012-08-02 22:28:09.298578437 +0200
+@@ -0,0 +1,8 @@
++<?xml version="1.0"?>
++<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
++<fontconfig>
++<!--  Use Slight Hinting --> 
++  <match target="font">
++    <edit name="hintstyle" mode="assign"><const>hintslight</const></edit>
++  </match>
++</fontconfig>
+--- fontconfig-2.10.1-old/conf.d/Makefile.am	2012-07-24 05:01:32.000000000 +0300
++++ fontconfig-2.10.1/conf.d/Makefile.am	2012-10-01 13:15:20.766006445 +0300
+@@ -25,6 +25,9 @@
+ 	README
+ 
+ CONF_LINKS = \
++	10-antialias.conf \
++	10-hinting.conf \
++	10-hinting-slight.conf \
+ 	20-unhint-small-vera.conf \
+ 	30-urw-aliases.conf \
+ 	30-metric-aliases.conf \
+@@ -47,7 +50,12 @@
+ 
+ templatedir = $(TEMPLATEDIR)
+ template_DATA =				\
++	10-antialias.conf		\
+ 	10-autohint.conf		\
++	10-hinting.conf 		\
++	10-hinting-full.conf		\
++	10-hinting-medium.conf		\
++	10-hinting-slight.conf		\
+ 	10-no-sub-pixel.conf		\
+ 	10-sub-pixel-bgr.conf		\
+ 	10-sub-pixel-rgb.conf		\
+@@ -66,6 +74,7 @@
+ 	49-sansserif.conf		\
+ 	50-user.conf			\
+ 	51-local.conf			\
++	53-monospace-lcd-filter.conf			\
+ 	60-latin.conf			\
+ 	65-fonts-persian.conf		\
+ 	65-khmer.conf			\
+diff -uraN fontconfig-2.10.1-old/conf.d/Makefile.in fontconfig-2.10.1/conf.d/Makefile.in
+--- fontconfig-2.10.1-old/conf.d/Makefile.in	2012-07-27 05:24:50.000000000 +0300
++++ fontconfig-2.10.1/conf.d/Makefile.in	2012-10-01 13:16:33.429241569 +0300
+@@ -260,6 +260,9 @@
+ 	README
+ 
+ CONF_LINKS = \
++	10-antialias.conf \
++	10-hinting.conf \
++	10-hinting-slight.conf \
+ 	20-unhint-small-vera.conf \
+ 	30-urw-aliases.conf \
+ 	30-metric-aliases.conf \
+@@ -278,7 +281,12 @@
+ EXTRA_DIST = $(template_DATA) $(DOC_FILES)
+ config_DATA = $(DOC_FILES)
+ template_DATA = \
++	10-antialias.conf		\
+ 	10-autohint.conf		\
++	10-hinting.conf		\
++	10-hinting-full.conf		\
++	10-hinting-medium.conf		\
++	10-hinting-slight.conf		\
+ 	10-no-sub-pixel.conf		\
+ 	10-sub-pixel-bgr.conf		\
+ 	10-sub-pixel-rgb.conf		\
+@@ -297,6 +305,7 @@
+ 	49-sansserif.conf		\
+ 	50-user.conf			\
+ 	51-local.conf			\
++	53-monospace-lcd-filter.conf			\
+ 	60-latin.conf			\
+ 	65-fonts-persian.conf		\
+ 	65-khmer.conf			\

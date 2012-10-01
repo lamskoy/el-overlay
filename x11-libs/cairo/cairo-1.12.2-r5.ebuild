@@ -1,22 +1,26 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-libs/cairo/cairo-1.10.2-r1.ebuild,v 1.7 2011/02/23 16:32:37 jer Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-libs/cairo/cairo-1.12.2-r4.ebuild,v 1.2 2012/09/12 05:37:43 mattst88 Exp $
 
-EAPI=3
+EAPI=4
 
-EGIT_REPO_URI="git://anongit.freedesktop.org/git/cairo"
-[[ ${PV} == *9999 ]] && GIT_ECLASS="git"
+inherit eutils flag-o-matic autotools
 
-inherit eutils flag-o-matic autotools ${GIT_ECLASS}
+if [[ ${PV} == *9999* ]]; then
+	inherit git-2
+	EGIT_REPO_URI="git://anongit.freedesktop.org/git/cairo"
+	SRC_URI=""
+	KEYWORDS=""
+else
+	SRC_URI="http://cairographics.org/releases/${P}.tar.xz"
+	KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
+fi
 
 DESCRIPTION="A vector graphics library with cross-device output support"
 HOMEPAGE="http://cairographics.org/"
-[[ ${PV} == *9999 ]] || SRC_URI="http://cairographics.org/releases/${P}.tar.gz"
-
 LICENSE="|| ( LGPL-2.1 MPL-1.1 )"
 SLOT="0"
-KEYWORDS="~alpha amd64 ~arm hppa ~ia64 ~mips ppc ~ppc64 ~s390 ~sh ~sparc x86 ~x86-fbsd ~x86-freebsd ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
-IUSE="X aqua debug directfb doc drm gallium opengl openvg qt4 static-libs +svg xcb +cleartype"
+IUSE="X aqua debug directfb doc drm gallium +glib opengl openvg qt4 static-libs +svg xcb +cleartype"
 
 # Test causes a circular depend on gtk+... since gtk+ needs cairo but test needs gtk+ so we need to block it
 RESTRICT="test"
@@ -25,17 +29,15 @@ RDEPEND="media-libs/fontconfig
 	media-libs/freetype:2
 	media-libs/libpng:0
 	sys-libs/zlib
-	>=x11-libs/pixman-0.18.4
+	>=x11-libs/pixman-0.22.0
 	directfb? ( dev-libs/DirectFB )
-	opengl? ( virtual/opengl )
-	openvg? ( media-libs/mesa[gallium] )
-	qt4? ( >=x11-libs/qt-gui-4.4:4 )
-	svg? ( dev-libs/libxml2 )
+	glib? ( >=dev-libs/glib-2.28.6:2 )
+	opengl? ( || ( media-libs/mesa[egl] media-libs/opengl-apple ) )
+	openvg? ( media-libs/mesa[openvg] )
+	qt4? ( >=x11-libs/qt-gui-4.8:4 )
 	X? (
 		>=x11-libs/libXrender-0.6
-		x11-libs/libXext
 		x11-libs/libX11
-		x11-libs/libXft
 		drm? (
 			>=sys-fs/udev-136
 			gallium? ( media-libs/mesa[gallium] )
@@ -46,7 +48,7 @@ RDEPEND="media-libs/fontconfig
 		x11-libs/xcb-util
 	)"
 DEPEND="${RDEPEND}
-	dev-util/pkgconfig
+	virtual/pkgconfig
 	>=sys-devel/libtool-2
 	doc? (
 		>=dev-util/gtk-doc-1.6
@@ -60,12 +62,24 @@ DEPEND="${RDEPEND}
 		)
 	)"
 
+# drm module requires X
+# for gallium we need to enable drm
+REQUIRED_USE="
+	drm? ( X )
+	gallium? ( drm )
+"
+
 src_prepare() {
 	epatch "${FILESDIR}"/${PN}-1.8.8-interix.patch
 	epatch "${FILESDIR}"/${PN}-1.10.0-buggy_gradients.patch
+	epatch "${FILESDIR}"/${PN}-1.10.2-qt-surface.patch
+	epatch "${FILESDIR}"/${PN}-respect-fontconfig.patch
+	epatch "${FILESDIR}"/${PN}-1.12.2-surfaceless-extension.patch
 	if use cleartype; then
-		epatch "${FILESDIR}"/${PN}-9999-cleartype.patch
+		epatch "${FILESDIR}"/${PN}-1.12.2-cleartype.patch
 	fi
+	epatch_user
+
 	# Slightly messed build system YAY
 	if [[ ${PV} == *9999* ]]; then
 		touch boilerplate/Makefile.am.features
@@ -81,43 +95,19 @@ src_prepare() {
 src_configure() {
 	local myopts
 
+	# SuperH doesn't have native atomics yet
+	use sh && myopts+=" --disable-atomic"
+
 	[[ ${CHOST} == *-interix* ]] && append-flags -D_REENTRANT
-
-	# tracing fails to compile, because Solaris' libelf doesn't do large files
-	[[ ${CHOST} == *-solaris* ]] && myopts+=" --disable-trace"
-
-	# 128-bits long arithemetic functions are missing
-	[[ ${CHOST} == powerpc*-*-darwin* ]] && filter-flags -mcpu=*
+	# http://bugs.freedesktop.org/show_bug.cgi?id=15463
+	[[ ${CHOST} == *-solaris* ]] && append-flags -D_POSIX_PTHREAD_SEMANTICS
 
 	#gets rid of fbmmx.c inlining warnings
 	append-flags -finline-limit=1200
 
-	if use X; then
-		myopts+="
-			--enable-tee=yes
-			$(use_enable drm)
-		"
+	use X && myopts+=" --enable-tee=yes"
 
-		if use drm; then
-			myopts+="
-				$(use_enable gallium)
-				$(use_enable xcb xcb-drm)
-			"
-		else
-			use gallium && ewarn "Gallium use requires drm use enabled. So disabling for now."
-			myopts+="
-				--disable-gallium
-				--disable-xcb-drm
-			"
-		fi
-	else
-		use drm && ewarn "drm use requires X use enabled. So disabling for now."
-		myopts+="
-			--disable-drm
-			--disable-gallium
-			--disable-xcb-drm
-		"
-	fi
+	use elibc_FreeBSD && myopts+=" --disable-symbol-lookup"
 
 	# --disable-xcb-lib:
 	#	do not override good xlib backed by hardforcing rendering over xcb
@@ -130,6 +120,7 @@ src_configure() {
 		$(use_enable aqua quartz-image) \
 		$(use_enable debug test-surfaces) \
 		$(use_enable directfb) \
+		$(use_enable glib gobject) \
 		$(use_enable doc gtk-doc) \
 		$(use_enable openvg vg) \
 		$(use_enable opengl gl) \
@@ -138,6 +129,8 @@ src_configure() {
 		$(use_enable svg) \
 		$(use_enable xcb) \
 		$(use_enable xcb xcb-shm) \
+		$(use_enable drm) \
+		$(use_enable gallium) \
 		--enable-ft \
 		--enable-pdf \
 		--enable-png \
@@ -148,6 +141,7 @@ src_configure() {
 
 src_install() {
 	# parallel make install fails
-	emake -j1 DESTDIR="${D}" install || die "Installation failed"
-	dodoc AUTHORS ChangeLog NEWS README || die
+	emake -j1 DESTDIR="${D}" install
+	find "${ED}" -name '*.la' -exec rm -f {} +
+	dodoc AUTHORS ChangeLog NEWS README
 }
