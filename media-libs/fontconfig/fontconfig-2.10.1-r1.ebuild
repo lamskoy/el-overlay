@@ -53,7 +53,7 @@ src_configure() {
 		--localstatedir=/var \
 		--with-default-fonts=/usr/share/fonts \
 		--with-add-fonts=/usr/share/fonts \
-		--with-templatedir=/etc/fonts/conv.avail \
+		--with-templatedir=/etc/fonts/conf.avail \
 		${myconf} || die
 }
 
