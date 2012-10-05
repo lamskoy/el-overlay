@@ -52,7 +52,8 @@ src_configure() {
 		$(use_enable doc docbook) \
 		--localstatedir=/var \
 		--with-default-fonts=/usr/share/fonts \
-		--with-add-fonts=/usr/local/share/fonts \
+		--with-add-fonts=/usr/share/fonts \
+		--with-templatedir=/etc/fonts/conv.avail \
 		${myconf} || die
 }
 
@@ -88,25 +89,25 @@ src_install() {
 	echo 'SANDBOX_PREDICT="/var/cache/fontconfig"' > "${D}"/etc/sandbox.d/37fontconfig
 }
 
-#pkg_preinst() {
+pkg_preinst() {
 	# Bug #193476
 	# /etc/fonts/conf.d/ contains symlinks to ../conf.avail/ to include various
 	# config files.  If we install as-is, we'll blow away user settings.
-	#ebegin "Syncing fontconfig configuration to system"
-	#if [[ -e ${ROOT}/etc/fonts/conf.d ]]; then
-	#	for file in "${ROOT}"/etc/fonts/conf.avail/*; do
-	#		f=${file##*/}
-	#		if [[ -L ${ROOT}/etc/fonts/conf.d/${f} ]]; then
-	#			[[ -f ${D}etc/fonts/conf.avail/${f} ]] \
-	#				&& ln -sf ../conf.avail/"${f}" "${D}"etc/fonts/conf.d/ &>/dev/null
-	#		else
-	#			[[ -f ${D}etc/fonts/conf.avail/${f} ]] \
-	#				&& rm "${D}"etc/fonts/conf.d/"${f}" &>/dev/null
-	#		fi
-	#	done
-	#fi
-	#eend $?
-#}
+	ebegin "Syncing fontconfig configuration to system"
+	if [[ -e ${ROOT}/etc/fonts/conf.d ]]; then
+		for file in "${ROOT}"/etc/fonts/conf.avail/*; do
+			f=${file##*/}
+			if [[ -L ${ROOT}/etc/fonts/conf.d/${f} ]]; then
+				[[ -f ${D}etc/fonts/conf.avail/${f} ]] \
+					&& ln -sf ../conf.avail/"${f}" "${D}"etc/fonts/conf.d/ &>/dev/null
+			else
+				[[ -f ${D}etc/fonts/conf.avail/${f} ]] \
+					&& rm "${D}"etc/fonts/conf.d/"${f}" &>/dev/null
+			fi
+		done
+	fi
+	eend $?
+}
 
 pkg_postinst() {
 	einfo "Cleaning broken symlinks in "${ROOT}"etc/fonts/conf.d/"
