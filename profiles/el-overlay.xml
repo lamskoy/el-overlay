@@ -5,11 +5,12 @@
      <name>el-overlay</name>
      <homepage>http://github.com/lamskoy/el-overlay</homepage>
      <description>Personal ebuilds</description>
-     <source type="git">git://github.com/lamskoy/el-overlay.git</source>
-     <feed>http://github.com/feeds/lamskoy/commits/el-overlay/master</feed>
+     <source type="git">https://github.com/prototype99/el-overlay.git</source>
+     <source type="git">git://github.com/prototype99/el-overlay.git</source>
+     <feed>http://github.com/feeds/prototype99/commits/el-overlay/master</feed>
      <owner>
-        <email>e.lamskoy@gmail.com</email>
-        <name>Eugene Lamskoy</name>
+        <email>sophietheopossum@yandex.com</email>
+        <name>seirra blake</name>
      </owner>
    </repo>
 </repositories>
